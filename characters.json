@@ -1,0 +1,14 @@
+{
+    "Joey": {
+      "image": "images/dinosaur.png",
+      "backgroundImage": "images/backgroundJoey.jpg",
+      "lionImage": "images/lionJoey.png",
+      "movingSound": "sounds/walking.mp3"
+    },
+    "Callie": {
+      "image": "images/unicorn.png",
+      "backgroundImage": "images/rainbow.png",
+      "lionImage": "images/cottonCandy.png",
+      "movingSound": "sounds/walking.mp3"
+    }
+  }

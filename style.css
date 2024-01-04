@@ -1,0 +1,130 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#game {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background: url('images/background.png') no-repeat center center;
+    background-size: cover;
+}
+
+#dinosaur {
+    position: absolute;
+    width: 400px; /* Adjust size as needed */
+    height: 400px;
+    background: url('images/dinosaur.png') no-repeat center center;
+    background-size: contain;
+}/* ... [rest of your CSS] ... */
+
+#score {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    font-size: 48px;
+    color: white;
+    z-index: 1000; /* Ensures it's always on top */
+    background: rgba(0, 0, 0, 0.5); /* Slightly transparent background */
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.lion {
+    position: absolute;
+    width: 100px; /* Adjust size as needed */
+    height: 100px;
+    background: url('images/lion.png') no-repeat center center;
+    background-size: contain;
+}
+#welcomeScreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+}
+
+.character {
+    cursor: pointer;
+    margin: 10px;
+}
+
+.character img {
+    width: 100px; /* Adjust as needed */
+    height: auto;
+}
+
+#nameInput {
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 16px;
+}
+#game, #score {
+    display: none;
+}
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    text-align: center;
+}
+
+#welcomeScreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    background: url('images/welcomeBackground.jpg') no-repeat center center; /* Add a nice background image */
+    background-size: cover;
+}
+
+#welcomeScreen h1 {
+    font-size: 3em; /* Larger heading */
+    color: #fff; /* Adjust color as needed */
+    text-shadow: 2px 2px 4px #000000; /* Shadow for better readability */
+}
+
+.character {
+    cursor: pointer;
+    margin: 10px;
+    transition: transform 0.3s; /* Smooth scale effect */
+}
+
+.character:hover {
+    transform: scale(1.1); /* Scale up on hover */
+}
+
+.character img {
+    width: 150px; /* Adjust as needed */
+    height: auto;
+    border-radius: 10px; /* Rounded corners for images */
+}
+
+#nameInput {
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 20px; /* Larger font size */
+    width: 50%; /* Adjust width */
+    border-radius: 5px; /* Rounded corners for input field */
+}
