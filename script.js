@@ -1,11 +1,11 @@
 // Importing modules
 import { startNextLevel, checkCollision, startGame,createBoostIcon, showBoostIcon } from './gameUtils.js';
 import { moveLions} from './lions.js';
-
+import { closeMathQuiz,showMathQuiz} from './math.js';
 const gameArea = document.getElementById('game');
 const movingSound = document.getElementById('movingSound');
 
-
+ 
 let boostActive = false;
 
 let isMoving = false;
@@ -89,6 +89,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Add click event listener to the quiz modal button, if it exists
+    const quizOkButton = document.getElementById('mathQuizModal')?.querySelector('button');
+    if (quizOkButton) {
+        quizOkButton.addEventListener('click', closeMathQuiz);
+    } else {
+        console.error('Quiz OK button not found');
+    }
+
     nameInput.addEventListener('keydown', (e) => {
         if (e.key === 'Tab' || e.key === 'Enter') {
             e.preventDefault(); // Prevent default tab behavior
@@ -108,6 +116,7 @@ window.onload = () => {
 
     moveLions();
     setInterval(moveLions, 3000);
+
 
     // Initially, hide the game area and score
     document.getElementById('game').style.display = 'none';

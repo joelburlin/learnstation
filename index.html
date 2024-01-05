@@ -47,13 +47,20 @@
         Your browser does not support the audio element.
     </audio>
     
-
+ 
+    
     <div id="game">
+        <div id="mathQuizArea">
+            <h2 id="mathQuestion" class="question"></h2>
+            <div class="lionCountDisplay">Selected Lions: <span id="selectedLionCount">0</span></div>
+        </div>
+
+        <div id="scoreDisplay">Score: <span id="score">0</span></div>
         <div id="levelDisplay">Level: <span id="currentLevel">1</span></div>
-        <div id="dinosaur"></div>
+                <div id="dinosaur"></div>
 
     </div>
-    <div>Score: <span id="score">0</span></div>
+ 
     <div id="levelCompleteModal" class="modal">
         <div class="modal-content">
             <h2>Level Complete!</h2>

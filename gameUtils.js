@@ -1,5 +1,6 @@
 
-import { lions, createLions, moveLions } from './lions.js';
+import { lions, createLions, moveLions,handleLionSelection } from './lions.js';
+import { generateMathQuestion, calculateSelectedLionSum,showMathQuiz } from './math.js';
 
 let currentCharacterConfig = null;
 
@@ -15,6 +16,13 @@ let boostTimeout;
 let level =1;
 let boostIcon;
 
+ function resetLevelWithMessage(message) {
+    alert(message); // Displaying an alert for simplicity
+    // Reset game state as needed (e.g., reset score, lion selection, etc.)
+  
+    document.getElementById('score').innerText = `Score: ${score}`;
+    startNextLevel(); // Restart the level
+}
 
 // Function to start the game with character configuration
 export async function startGame(characterName) {
@@ -29,9 +37,40 @@ export async function startGame(characterName) {
         document.getElementById('welcomeScreen').style.display = 'none';
         document.getElementById('game').style.display = 'block';
         document.getElementById('score').style.display = 'block';
+ 
+        // Start the math quiz after character selection
+        startLevelWithMathQuiz();
     } else {
         console.error('Character configuration not found for:', characterName);
     }
+};
+
+// Update the function to display the math quiz
+
+function startLevelWithMathQuiz() {
+    const mathQuiz = generateMathQuestion(); // Get a new math question
+    window.quizAnswer = mathQuiz.answer; // Store the answer globally
+
+    displayMathQuiz(mathQuiz.question); // Display the question
+    const settings = currentCharacterConfig;
+
+     createLions(mathQuiz.answer, settings.lionImage); // Use global config for lion image
+        //createLions(quizAnswer, currentCharacterConfig ? currentCharacterConfig.lionImage : null, true, quizAnswer);
+}
+
+function displayMathQuiz(question) {
+    const questionElement = document.getElementById('mathQuestion'); // Get the element where the question should be displayed
+    questionElement.textContent = question; // Update the text content with the new question
+}
+
+ 
+
+ 
+
+
+function createLionsBasedOnQuiz(answer) {
+    const lionImage = currentCharacterConfig ? currentCharacterConfig.lionImage : null;
+    createLions(answer + 2, lionImage); // Create lions based on the quiz answer
 }
 function applyCharacterSettings() {
     if (currentCharacterConfig) {
@@ -42,7 +81,9 @@ function applyCharacterSettings() {
 
         lions.forEach(lion => lion.remove()); // Clear existing lions
 
-        createLions(numberOfLions, settings.lionImage); // Use global config for lion image
+      //  createLions(numberOfLions, settings.lionImage); // Use global config for lion image
+        //createLions(quizAnswer, currentCharacterConfig ? currentCharacterConfig.lionImage : null, true, quizAnswer);
+
     }
 }
 
@@ -69,7 +110,6 @@ export function showBoostIcon() {
 }
 export function activateBoost() {
     boostActive = true;
-    debugger;
 
     // Set a timeout to deactivate the boost after 10 seconds
     setTimeout(function() {
@@ -106,16 +146,20 @@ export function checkCollision() {
             const lionRect = lion.getBoundingClientRect();
             if (dinoRect.left < lionRect.right && dinoRect.right > lionRect.left &&
                 dinoRect.top < lionRect.bottom && dinoRect.bottom > lionRect.top) {
-                    lion.style.display = 'none'; // Hide lion on collision
-                    showCollisionAnimation(lionRect.left, lionRect.top); // Show collision animation
-                    score++;
-                    document.getElementById('score').innerText = `Score: ${score}`;
-                    playHitSound();
-                    checkLevelComplete();
+                lion.style.display = 'none'; // Hide lion on collision
+                score++; // Increment the score which also represents the lion selection count
+                document.getElementById('score').innerText = `Score: ${score}`;
+                playHitSound();
+                showCollisionAnimation(lionRect.left, lionRect.top);
+                handleLionSelection(lion); //
+
+                if (score > window.quizAnswer) {
+                    resetLevelWithMessage("Exceeded the quiz answer. Restarting level.");
                 }
+                checkLevelComplete();
+            }
         }
     });
-
     // Check collision with boost icon
     if (boostIcon.style.display !== 'none') {
         const boostRect = boostIcon.getBoundingClientRect();
@@ -164,8 +208,45 @@ export function checkCollision() {
 }
 
 
-// Start next level
+function handleMathQuizCompletion() {
+    const selectedSum = calculateSelectedLionSum();
+    const quizAnswer = window.quizAnswer;
+
+    if (selectedSum === quizAnswer) {
+        // Correct answer
+        document.getElementById('mathQuizModal').style.display = 'none'; // Close the quiz modal
+
+        // Proceed with the game...
+        startNextLevel();
+    } else {
+        // Incorrect answer
+        alert("Incorrect answer. Please try again!");
+        // Optionally reset the quiz or the level here
+    }
+}
+document.addEventListener('mathQuizCompleted', () => {
+    const selectedSum = calculateSelectedLionSum();
+    const quizAnswer = window.quizAnswer;
+
+    if (selectedSum === quizAnswer) {
+        // Correct answer, start the level
+        level++;
+        numberOfLions = Math.ceil(numberOfLions * 1.25);
+        const lionImage = currentCharacterConfig ? currentCharacterConfig.lionImage : null;
+        createLions(numberOfLions, lionImage); // Use updated number of lions
+        updateLevelDisplay(level);
+    } else {
+        // Incorrect answer, restart the level or show a message
+        alert("Incorrect answer. Please try again!");
+        startNextLevel(); // Restart the level
+    }
+});
 export function startNextLevel() {
+    const answer = showMathQuiz(); // Show math quiz and get answer
+    window.quizAnswer = answer;
+    score = 0;
+    document.getElementById('score').innerText = `Score: ${score}`;
+
     level++;
     numberOfLions = Math.ceil(numberOfLions * 1.25); // Increase the number of lions
 
@@ -174,14 +255,14 @@ export function startNextLevel() {
 
     // Create new lions for the next level with the current character's lion image
     const lionImage = currentCharacterConfig ? currentCharacterConfig.lionImage : null;
-    createLions(numberOfLions, lionImage);
+    createLions(numberOfLions, lionImage, answer); 
 
     // Update level display, if you have one
     updateLevelDisplay(level);
 
 
-    // Reset other necessary game state as needed
-    // ...
+    document.addEventListener('mathQuizCompleted', handleMathQuizCompletion);
+
 }
 
 

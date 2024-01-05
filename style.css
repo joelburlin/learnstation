@@ -2,6 +2,7 @@ body, html {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    font-family: 'Arial', sans-serif; /* Clean and modern font */
 }
 
 #game {
@@ -18,18 +19,69 @@ body, html {
     height: 400px;
     background: url('images/dinosaur.png') no-repeat center center;
     background-size: contain;
-}/* ... [rest of your CSS] ... */
+}
 
-#score {
-    position: fixed;
+#scoreDisplay, #levelDisplay {
+    position: absolute;
     top: 10px;
+    padding: 10px 20px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-size: 1.5em;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    font-weight: bold;
+    text-align: center;
+    z-index: 100;
+}
+
+#scoreDisplay {
     left: 10px;
-    font-size: 48px;
-    color: white;
-    z-index: 1000; /* Ensures it's always on top */
-    background: rgba(0, 0, 0, 0.5); /* Slightly transparent background */
-    padding: 5px;
-    border-radius: 5px;
+    background-color: rgba(255, 87, 34, 0.8); /* Vibrant orange for score */
+}
+
+#levelDisplay {
+    right: 10px;
+    background-color: rgba(33, 150, 243, 0.8); /* Bright blue for level */
+}
+
+#mathQuizArea {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 10px 20px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 90%;
+}
+
+#mathQuestion {
+    font-size: 2em;
+    color: #4a90e2; /* Bright blue for visibility */
+    font-weight: bold;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.lionCountDisplay {
+    font-size: 1.5em;
+    background-color: #ffed4a; /* Bright yellow for visibility */
+    color: #000;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-weight: bold;
+    margin-left: 20px;
+}
+
+#selectedLionCount {
+    color: #d9534f; /* Red color for the number */
 }
 
 .lion {
@@ -38,7 +90,9 @@ body, html {
     height: 100px;
     background: url('images/lion.png') no-repeat center center;
     background-size: contain;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Adding shadow for depth */
 }
+
 #welcomeScreen {
     display: flex;
     flex-direction: column;
@@ -46,85 +100,72 @@ body, html {
     justify-content: center;
     height: 100vh;
     text-align: center;
+    background: url('images/welcomeBackground.jpg') no-repeat center center;
+    background-size: cover;
 }
 
-.character {
+#welcomeScreen h1 {
+    font-size: 4em;
+    color: #fff;
+    text-shadow: 3px 3px 6px #000;
+}
+
+.character, .character img {
     cursor: pointer;
     margin: 10px;
+    width: 140px; /* Larger character images */
+    height: auto;
+    border-radius: 20px; /* More rounded for a playful look */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s; /* Smooth scale effect */
 }
 
-.character img {
-    width: 100px; /* Adjust as needed */
-    height: auto;
+.character:hover img {
+    transform: scale(1.1); /* Enlarge on hover */
 }
 
 #nameInput {
     margin-top: 20px;
     padding: 10px;
-    font-size: 16px;
+    font-size: 20px;
+    width: 50%;
+    border-radius: 5px;
 }
-#game, #score {
-    display: none;
-}
+
 .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
     left: 0;
-    top: 0;
+    top: 10px; /* Adjust as needed */
     width: 100%; /* Full width */
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    transform: translateY(0); /* Reset any transform if applied */
 }
 
 .modal-content {
-    background-color: #fefefe;
+    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent for gameplay visibility */
     margin: 15% auto; /* 15% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
+    width: 80%;
     text-align: center;
 }
 
-#welcomeScreen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    text-align: center;
-    background: url('images/welcomeBackground.jpg') no-repeat center center; /* Add a nice background image */
-    background-size: cover;
-}
-
-#welcomeScreen h1 {
-    font-size: 3em; /* Larger heading */
-    color: #fff; /* Adjust color as needed */
-    text-shadow: 2px 2px 4px #000000; /* Shadow for better readability */
-}
-
-.character {
+button {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 1.2em;
     cursor: pointer;
-    margin: 10px;
-    transition: transform 0.3s; /* Smooth scale effect */
+    transition: background-color 0.3s ease;
 }
 
-.character:hover {
-    transform: scale(1.1); /* Scale up on hover */
-}
-
-.character img {
-    width: 150px; /* Adjust as needed */
-    height: auto;
-    border-radius: 10px; /* Rounded corners for images */
-}
-
-#nameInput {
-    margin-top: 20px;
-    padding: 10px;
-    font-size: 20px; /* Larger font size */
-    width: 50%; /* Adjust width */
-    border-radius: 5px; /* Rounded corners for input field */
+button:hover {
+    background-color: #357ab8;
+    transform: scale(1.05);
 }
