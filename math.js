@@ -21,24 +21,18 @@ export function closeMathQuiz() {
     // Dispatch a custom event to indicate quiz completion
     document.dispatchEvent(new Event('mathQuizCompleted'));
 }
-export function  calculateSelectedLionSum() {
-    let sum = 0;
-    document.querySelectorAll('.lion.selected').forEach(lion => {
-        const lionValue = lion.dataset.value;
-        console.log('Lion value:', lionValue); // Debugging line
+export function calculateSelectedLionSum() {
+    // Count the number of selected lions
+    const selectedLionsCount = document.querySelectorAll('.lion.selected').length;
+    
+    console.log('Selected lions count:', selectedLionsCount); // Debugging line
 
-        if (!isNaN(lionValue)) {
-            sum += parseInt(lionValue, 10);
-        } else {
-            console.error('Invalid lion value:', lionValue); // Error logging
-        }
-    });
 
-    console.log('Total sum:', sum); // Debugging line
-    return sum;
+    return selectedLionsCount;
 }
+
 export function showMathQuiz() {
     const mathQuiz = generateMathQuestion();
     document.getElementById('mathQuestion').textContent = mathQuiz.question;
-    window.quizAnswer = mathQuiz.answer;
+    window.quizAnswer = mathQuiz.answer; // Store the quiz answer globally
 }

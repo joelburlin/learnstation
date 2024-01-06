@@ -2,13 +2,15 @@
     "Joey": {
       "image": "images/dinosaur.png",
       "backgroundImage": "images/background.png",
-      "lionImage": "images/lion.png",
-      "movingSound": "sounds/walking.mp3"
+      "lionImage": "images/tiger.png",
+      "movingSound": "sounds/walking.mp3",
+      "eatingSound": "sounds/walking.mp3"
     },
     "Callie": {
       "image": "images/unicorn.png",
       "backgroundImage": "images/rainbow.png",
       "lionImage": "images/cottonCandy.png",
-      "movingSound": "sounds/walking.mp3"
+      "movingSound": "sounds/unicorn.mp3",
+      "eatingSound": "sounds/unicorn.mp3"
     }
   }

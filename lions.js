@@ -1,5 +1,6 @@
 const gameArea = document.getElementById('game');
 export let lions = []; // Export lions array
+import { updateGameScore } from './gameUtils.js'; // Assuming you have a function to update the score
 
 import {  calculateSelectedLionSum  } from './math.js';
 
@@ -11,16 +12,20 @@ export function moveLions() {
     });
 }
 
-// Function to create lions
-// Function to create lions
+// Function to handle lion selection
 export function handleLionSelection(lion) {
+    console.log("Lion selected/deselected:", lion);
     lion.classList.toggle('selected');
-    updateSelectedLionCount(); // Update the count display
+    let selectedSum= updateSelectedLionCount();
+    return selectedSum;
 }
+
 
 function updateSelectedLionCount() {
     const selectedSum = calculateSelectedLionSum();
     document.getElementById('selectedLionCount').textContent = selectedSum;
+    updateGameScore(selectedSum); // Update the score using the callback
+    return selectedSum;
 }
 // Function to create lions
 // Function to create lions
@@ -33,24 +38,18 @@ export function createLions(number, lionImageUrl, isQuizMode = false, quizAnswer
 
     if (isQuizMode) {
         // Create lions based on the math quiz answer
-        let totalLions = quizAnswer + Math.floor(Math.random() * 3) + 2; // answer + 2-3
+        let totalLions = quizAnswer + Math.floor(Math.random() * 3) + 2; 
         while (totalLions > 0) {
-            let groupSize = Math.min(totalLions, Math.floor(Math.random() * 6) + 1); // 1-6 lions, not more than 50% of answer
+            let groupSize = Math.min(totalLions, Math.floor(Math.random() * 6) + 1);
             groupSize = Math.min(groupSize, Math.ceil(quizAnswer / 2));
 
             for (let i = 0; i < groupSize; i++) {
                 let lion = document.createElement('div');
                 lion.className = 'lion';
-    lion.dataset.value = 1; // each lion counts as 1.
-    lion.onclick = () => {
-        console.log("Lion clicked"); // Debugging log
-        handleLionSelection(lion);
-    };
-
-                if (lionImageUrl) {
-                    lion.style.backgroundImage = `url('${lionImageUrl}')`;
-                    lion.style.backgroundSize = 'cover';
-                }
+                lion.style.backgroundImage = `url('${lionImageUrl}')`;
+                lion.style.backgroundSize = 'cover';
+                lion.setAttribute('data-value', '1');
+                console.log('Creating lion with data-value:', lion.getAttribute('data-value')); // Debugging log
                 gameArea.appendChild(lion);
                 lions.push(lion);
             }
@@ -61,15 +60,17 @@ export function createLions(number, lionImageUrl, isQuizMode = false, quizAnswer
         for (let i = 0; i < number; i++) {
             let lion = document.createElement('div');
             lion.className = 'lion';
-            if (lionImageUrl) {
-                lion.style.backgroundImage = `url('${lionImageUrl}')`;
-                lion.style.backgroundSize = 'cover';
-            }
+            lion.style.backgroundImage = `url('${lionImageUrl}')`;
+            lion.style.backgroundSize = 'cover';
+            lion.setAttribute('data-value', '1');
+            console.log('Creating lion with data-value:', lion.getAttribute('data-value')); // Debugging log
             gameArea.appendChild(lion);
             lions.push(lion);
         }
     }
 }
+
+
 
 
 function checkLionSelection() {
