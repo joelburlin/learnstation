@@ -9,58 +9,97 @@ const gameArea = document.getElementById('game');
 const eatingSound = document.getElementById('hitSound');
 
 
-let boostActive = false;
+export let boostActive = false;
 const hitSound = document.getElementById('hitSound');
+const correctSound = document.getElementById('correctSound');
+const wrongSound = document.getElementById('wrongSound');
 let score = 0;
 let lastBoostIconTime = Date.now(); // Keep track of last time the boost icon was shown
 let boostTimeout;
-let level = 1;
+export let level = 1;
 let boostIcon;
 let selectedSum=0;
+  
 
 export function updateGameScore(newScore) {
     score += newScore;
     document.getElementById('score').innerText = `${score}`;
 }
+const lionIcon = "🦁";
 
 export function resetLevelWithMessage(message) {
-    // Calculate the difference between the selected sum and the quiz answer
+    const gameType = document.querySelector('input[name="gameType"]:checked').value;
     const selectedSum = calculateSelectedLionSum();
-    const difference = Math.abs(selectedSum - window.quizAnswer);
+    let visualExplanation = "";
 
-    // Prepare the message content for the modal
-    let modalMessage = `<h2 class="modal-message">${message}</h2>`;
-    if (selectedSum > window.quizAnswer) {
-        modalMessage += `<p class="modal-message">You selected ${selectedSum}, which is ${difference} more than the answer.</p>`;
-    } else {
-        modalMessage += `<p class="modal-message">You selected ${selectedSum}, which is ${difference} less than the answer.</p>`;
+    // Define the lion icon
+    const lionIcon = "🦁";
+    if (gameType === 'addition') {
+        const correctSum = window.quizAnswer;
+        const lionsNeeded = correctSum - selectedSum;
+
+        visualExplanation += "<div style='font-size: 24px; margin-top: 20px;'>";
+
+        // Show selected lions
+        visualExplanation += lionIcon.repeat(selectedSum);
+
+        // Show correct or additional lions needed
+        if (lionsNeeded > 0) {
+            visualExplanation += " + " + lionIcon.repeat(lionsNeeded);
+        } else if (lionsNeeded < 0) {
+            visualExplanation += " - " + lionIcon.repeat(-lionsNeeded);
+        }
+
+        visualExplanation += " = " + lionIcon.repeat(correctSum);
+
+        visualExplanation += "</div>";
+    } else if (gameType === 'multiplication') {
+        const correctProduct = window.quizAnswer;
+        const factor = correctProduct / selectedSum;
+
+        visualExplanation += "<div style='font-size: 24px; margin-top: 20px;'>";
+
+        // Show groups for multiplication
+        for (let i = 0; i < factor; i++) {
+            visualExplanation += "<div>" + lionIcon.repeat(selectedSum) + "</div>";
+        }
+
+        visualExplanation += "= " + lionIcon.repeat(correctProduct);
+
+        visualExplanation += "</div>";
     }
 
-    // Set modal content and display the modal
+    // Combine the message and the visual explanation
+    let modalContentHtml = `<h2 class="modal-message" style="font-size: 36px;">${message}</h2>`;
+    modalContentHtml += visualExplanation;
+
+    // Update the modal content and display it
     const modalContent = document.getElementById('levelCompleteModal').querySelector('.modal-content');
-    modalContent.innerHTML = modalMessage;
+    modalContent.innerHTML = modalContentHtml;
     document.getElementById('levelCompleteModal').style.display = 'block';
 
-    // Apply jumping effect to the dinosaur
+    // Add the jumping effect to the dinosaur
     document.getElementById('dinosaur').classList.add('jumping');
 
-    // Reset the selected lions and score
-    document.querySelectorAll('.lion').forEach(lion => {
-        lion.classList.remove('selected');
-        lion.style.display = 'block';
-    });
-    document.getElementById('score').innerText = `Score: 0`;
-    document.getElementById('selectedLionCount').innerText = `0`;
-
-
+    // Reset the selected lions and the score
+    document.querySelectorAll('.lion').forEach(lion => lion.classList.remove('selected'));
+    document.getElementById('score').innerText = "Score: 0";
+    document.getElementById('selectedLionCount').innerText = "0";
 }
 
 
 
-// Function to start the game with character configuration
-export async function startGame(characterName) {
-    const characterConfig = await fetchCharacterConfig();
 
+
+
+
+// Function to start the game with character configuration
+// Function to start the game with character configuration and selected game type
+export async function startGame(characterName) {
+    const gameType = document.querySelector('input[name="gameType"]:checked').value;
+
+    const characterConfig = await fetchCharacterConfig();
+ 
     if (characterName && characterConfig[characterName]) {
         currentCharacterConfig = characterConfig[characterName]; // Update global config
 
@@ -71,23 +110,26 @@ export async function startGame(characterName) {
         document.getElementById('game').style.display = 'block';
         document.getElementById('score').style.display = 'block';
 
-        // Start the math quiz after character selection
-        startLevelWithMathQuiz();
+        // Start the math quiz after character selection, passing the game type
+        startLevelWithMathQuiz(1, gameType);
     } else {
         console.error('Character configuration not found for:', characterName);
     }
 };
 
-// Update the function to display the math quiz
+// Update the function to display the math quiz according to the game type
+export function startLevelWithMathQuiz(level) {
+    const gameType = document.querySelector('input[name="gameType"]:checked').value;
 
-export function startLevelWithMathQuiz() {
-    const mathQuiz = generateMathQuestion(); // Get a new math question
+    const mathQuiz = generateMathQuestion(level, gameType); // Get a new math question according to game type
     window.quizAnswer = mathQuiz.answer; // Store the answer globally
 
     displayMathQuiz(mathQuiz.question); // Display the question
-    debugger;
     createLions(mathQuiz.answer * 2, currentCharacterConfig ? currentCharacterConfig.lionImage : null, true,  mathQuiz.answer); // Create lions based on the quiz answer
 }
+
+// Ensure generateMathQuestion function is updated to handle both 'addition' and 'multiplication' types as previously discussed.
+
 
 
 function displayMathQuiz(question) {
@@ -239,6 +281,23 @@ function playHitSound() {
     }, 2000); // Play for 2 seconds
 }
 
+// Function to play the hit sound
+export function playCorrectSound() {
+    correctSound.play();
+    setTimeout(() => {
+        correctSound.pause();
+        correctSound.currentTime = 0; // Resets the audio to the beginning
+    }, 5000); // Play for 2 seconds
+}
+
+// Function to play the hit sound
+export function playWrongSound() {
+    wrongSound.play();
+    setTimeout(() => {
+        wrongSound.pause();
+        wrongSound.currentTime = 0; // Resets the audio to the beginning
+    }, 5000); // Play for 2 seconds
+}
 
 function handleMathQuizCompletion() {
     const selectedSum = calculateSelectedLionSum();
@@ -261,14 +320,14 @@ export function startNextLevel(quizAnswer) {
    // const answer = showMathQuiz(); // Show math quiz and get answer
     window.quizAnswer = quizAnswer;
     document.getElementById('score').innerText = `${score}`;
-   // document.getElementById('selectedLionCount').innerText = ``;
+   document.getElementById('selectedLionCount').innerText = `0`;
  
     level++;
     updateLevelDisplay(level);
 
     // Remove old lions
     lions.forEach(lion => lion.remove());
-
+    playCorrectSound();
     // Show level complete modal with message
     const modalContent = document.getElementById('levelCompleteModal').querySelector('.modal-content');
     let modalMessage = `<h2 class="modal-message">Level ${level} Complete! Press Enter to continue...</h2>`;

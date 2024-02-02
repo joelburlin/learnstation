@@ -8,7 +8,7 @@
 </head>
 
 <body>
-
+<form>
 
     <div id="welcomeScreen">
         <h1>Welcome to the Dinosaur Game!</h1>
@@ -35,6 +35,25 @@
             </div>
             <!-- Add more characters as needed -->
         </div>
+        <!-- Inside the #welcomeScreen div, add a select element for game type -->
+        <div id="gameTypeSelection">
+            <div class="gameTypeOption">
+                <input type="radio" id="addition" name="gameType" value="addition" checked>
+                <label for="addition">
+                    <img src="images/addition.png" alt="Addition"> <!-- Replace with your addition icon -->
+                    <span>Addition</span>
+                </label>
+            </div>
+            <div class="gameTypeOption">
+                <input type="radio" id="multiplication" name="gameType" value="multiplication">
+                <label for="multiplication">
+                    <img src="images/multiplication.png" alt="Multiplication"> <!-- Replace with your multiplication icon -->
+                    <span>Multiplication</span>
+                </label>
+            </div>
+        </div>
+        
+
         <input type="text" id="nameInput" placeholder="Enter character name to start">
     </div>
 
@@ -44,6 +63,14 @@
     </audio>
     <audio id="hitSound">
         <source src="sounds/eating.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="correctSound">
+        <source src="sounds/correct-answer.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="wrongSound">
+        <source src="sounds/wrong-answer.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
     
@@ -74,7 +101,7 @@
             <p>Press Enter to continue...</p>
         </div>
     </div>
-    
+</form>
     <script type="module" src="script.js"></script>
 </body>
 </html>

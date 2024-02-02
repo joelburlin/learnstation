@@ -1,12 +1,23 @@
 // Importing modules
-import { startNextLevel, checkCollision, startGame,createBoostIcon, showBoostIcon ,resetLevelWithMessage,startLevelWithMathQuiz} from './gameUtils.js';
+import { startNextLevel, checkCollision, startGame,createBoostIcon, showBoostIcon ,resetLevelWithMessage,startLevelWithMathQuiz,playCorrectSound,playWrongSound,level,boostActive} from './gameUtils.js';
 import { moveLions} from './lions.js';
 import { closeMathQuiz,calculateSelectedLionSum} from './math.js';
 const gameArea = document.getElementById('game');
 const movingSound = document.getElementById('movingSound');
 
+function startNewGame() {
+    // Logic to start a new game
+    // Hide any modals, reset game state, scores, etc.
+    document.getElementById('levelCompleteModal').style.display = 'none';
+    document.getElementById('levelNotCompleteModal').style.display = 'none';
+    document.getElementById('welcomeScreen').style.display = 'flex';
+    document.getElementById('game').style.display = 'none';
+    document.querySelectorAll('.lion').forEach(lion => lion.classList.remove('selected'));
+    document.getElementById('score').innerText = "Score: 0";
+    document.getElementById('selectedLionCount').innerText = "0";
+    // Reset any other game state as needed
+}
  
-let boostActive = false;
 
 let isMoving = false;
 const dinosaur = document.getElementById('dinosaur');
@@ -33,6 +44,7 @@ document.addEventListener('keydown', (e) => {
         if (selectedSum > window.quizAnswer) {
             // Too many lions selected, restart level
             resetLevelWithMessage("Exceeded the quiz answer. Restarting level.");
+            playWrongSound();
         } else if (selectedSum === window.quizAnswer  && (document.getElementById('levelCompleteModal').style.display === 'none' || document.getElementById('levelCompleteModal').style.display === '')) {
             // Correct number of lions selected, proceed to next level
             document.getElementById('levelCompleteModal').style.display = 'none';
@@ -41,7 +53,7 @@ document.addEventListener('keydown', (e) => {
             startNextLevel(window.quizAnswer);
         } else if (document.getElementById('levelCompleteModal').style.display === 'block') {
 
-            startLevelWithMathQuiz();
+            startLevelWithMathQuiz(level);
             // Correct number of lions selected, proceed to next level
             document.getElementById('levelCompleteModal').style.display = 'none';
 
@@ -57,12 +69,17 @@ document.addEventListener('keydown', (e) => {
         }    else if (selectedSum < window.quizAnswer ){
             // Not enough lions selected, provide feedback
             showFeedbackModal("Keep going! You haven't reached the target number yet.","levelNotCompleteModal");
+            playWrongSound();
         }
         return; // Prevent other key actions
     }
  
     // Handle dinosaur movement
-    const speed = boostActive ? 200 : 100; // Adjust speed if boost is active
+    const speed = boostActive ? 400 : 100; // Adjust speed if boost is active
+    if (boostActive) {
+
+        console.log('boost active')
+    }
     const rect = dinosaur.getBoundingClientRect();
     let moved = false;
     let newLeft = rect.left;
@@ -111,7 +128,12 @@ document.addEventListener('keyup', () => {
 
  
 
-
+   // Event listener for the Escape key to start a new game
+   document.addEventListener('keydown', function(e) {
+    if (e.key === "Escape") {
+        startNewGame(); // Function to start a new game
+    }
+});
 
 
  
@@ -197,6 +219,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+       // Adding a new game button in the top left
+       const newGameBtn = document.createElement('button');
+       newGameBtn.textContent = 'New Game';
+       newGameBtn.style.position = 'absolute';
+       newGameBtn.style.right = '0px';
+       newGameBtn.style.bottom = '0px';
+       document.body.appendChild(newGameBtn);
+   
+       newGameBtn.addEventListener('click', startNewGame)
    
 });
 

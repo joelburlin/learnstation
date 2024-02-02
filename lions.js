@@ -7,10 +7,39 @@ import {  calculateSelectedLionSum  } from './math.js';
 // Random movement for lions
 export function moveLions() {
     lions.forEach(lion => {
-        lion.style.left = Math.random() * (window.innerWidth - lion.offsetWidth) + 'px';
-        lion.style.top = Math.random() * (window.innerHeight - lion.offsetHeight) + 'px';
+        // Function to update lion position
+        const updatePosition = () => {
+            const dinoRect = dinosaur.getBoundingClientRect(); // Continuously update dinosaur's position
+
+            // Check if lion is too close to the dinosaur
+            const lionRect = lion.getBoundingClientRect();
+            const isCloseToDino = Math.abs(lionRect.left - dinoRect.left) < 200 && Math.abs(lionRect.top - dinoRect.top) < 200;
+
+            // If too close to the dinosaur, change direction
+            if (isCloseToDino) {
+                lion.targetX = Math.random() * (window.innerWidth - lion.offsetWidth);
+                lion.targetY = Math.random() * (window.innerHeight - lion.offsetHeight);
+            } else if (Math.abs(lion.offsetLeft - lion.targetX) < 5 && Math.abs(lion.offsetTop - lion.targetY) < 5) {
+                // If reached the target and not close to the dinosaur, set a new target
+                lion.targetX = Math.random() * (window.innerWidth - lion.offsetWidth);
+                lion.targetY = Math.random() * (window.innerHeight - lion.offsetHeight);
+            }
+
+            lion.style.left = lion.targetX + 'px';
+            lion.style.top = lion.targetY + 'px';
+
+            requestAnimationFrame(updatePosition); // Continuously update position
+        };
+
+        // Set initial target positions
+        lion.targetX = Math.random() * (window.innerWidth - lion.offsetWidth);
+        lion.targetY = Math.random() * (window.innerHeight - lion.offsetHeight);
+
+        updatePosition(); // Start the movement loop
     });
 }
+
+
 
 // Function to handle lion selection
 export function handleLionSelection(lion) {
