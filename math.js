@@ -7,6 +7,8 @@ export function generateMathQuestion(level, quizType = 'addition') {
         const num1 = Math.ceil(Math.random() * (max - min + 1)) + min - 1;
         const num2 = Math.ceil(Math.random() * (max - min + 1)) + min - 1;
         question = `${num1} × ${num2}`;
+        window.quizQuestion = question; // Store the quiz answer globally
+
         answer = num1 * num2;
     } else {
         // Default to addition if no quiz type is specified or if it's not multiplication
@@ -15,6 +17,7 @@ export function generateMathQuestion(level, quizType = 'addition') {
         const num1 = Math.ceil(Math.random() * (max - min + 1)) + min - 1;
         const num2 = Math.ceil(Math.random() * (max - min + 1)) + min - 1;
         question = `${num1} + ${num2}`;
+        window.quizQuestion = question; // Store the quiz answer globally
         answer = num1 + num2;
     }
 

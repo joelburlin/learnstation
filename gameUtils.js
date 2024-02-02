@@ -25,52 +25,192 @@ export function updateGameScore(newScore) {
     score += newScore;
     document.getElementById('score').innerText = `${score}`;
 }
-const lionIcon = "🦁";
-
-export function resetLevelWithMessage(message) {
+ 
+export function resetLevelWithMessage3(message) {
     const gameType = document.querySelector('input[name="gameType"]:checked').value;
     const selectedSum = calculateSelectedLionSum();
     let visualExplanation = "";
 
     // Define the lion icon
     const lionIcon = "🦁";
+
     if (gameType === 'addition') {
         const correctSum = window.quizAnswer;
-        const lionsNeeded = correctSum - selectedSum;
+        const excessLions = Math.max(0, selectedSum - correctSum); // Only show excess if selectedSum is greater than correctSum
 
-        visualExplanation += "<div style='font-size: 24px; margin-top: 20px;'>";
+        // Function to create lion groups with a max of 5 per line
+        const createLionGroups = (count) => {
+            let groups = "";
+            for (let i = 0; i < count; i += 5) {
+                groups += "<div>" + lionIcon.repeat(Math.min(5, count - i)) + "</div>";
+            }
+            return groups;
+        };
 
-        // Show selected lions
-        visualExplanation += lionIcon.repeat(selectedSum);
-
-        // Show correct or additional lions needed
-        if (lionsNeeded > 0) {
-            visualExplanation += " + " + lionIcon.repeat(lionsNeeded);
-        } else if (lionsNeeded < 0) {
-            visualExplanation += " - " + lionIcon.repeat(-lionsNeeded);
-        }
-
-        visualExplanation += " = " + lionIcon.repeat(correctSum);
-
+        // Part 1: Selected Lions
+        visualExplanation += "<div style='margin-bottom: 20px;'>";
+        visualExplanation += `<div style='font-size: 36px; margin-bottom: 5px;'>${selectedSum}</div>`;
+        visualExplanation += createLionGroups(selectedSum);
         visualExplanation += "</div>";
-    } else if (gameType === 'multiplication') {
-        const correctProduct = window.quizAnswer;
-        const factor = correctProduct / selectedSum;
 
-        visualExplanation += "<div style='font-size: 24px; margin-top: 20px;'>";
-
-        // Show groups for multiplication
-        for (let i = 0; i < factor; i++) {
-            visualExplanation += "<div>" + lionIcon.repeat(selectedSum) + "</div>";
+        // Part 2: Excess Lions (if any)
+        if (excessLions > 0) {
+            visualExplanation += "<div style='font-size: 36px; margin-bottom: 5px; color: red;'>Too many!</div>";
+            visualExplanation += "<div style='margin-bottom: 20px;'>";
+            visualExplanation += `<div style='font-size: 36px; margin-bottom: 5px;'>${excessLions}</div>`;
+            visualExplanation += createLionGroups(excessLions);
+            visualExplanation += "</div>";
         }
 
-        visualExplanation += "= " + lionIcon.repeat(correctProduct);
+        // Correct Answer
+        visualExplanation += "<div style='font-size: 36px; margin-bottom: 5px;'>Correct:</div>";
+        visualExplanation += "<div style='margin-bottom: 20px;'>";
+        visualExplanation += `<div style='font-size: 48px; margin-bottom: 5px;'>${correctSum}</div>`;
+        visualExplanation += createLionGroups(correctSum);
+        visualExplanation += "</div>";
+    }
 
+    if (gameType === 'multiplication') {
+        const correctProduct = window.quizAnswer;
+        const factor = Math.floor(correctProduct / selectedSum); // Calculate how many full groups can be formed
+        const remainder = correctProduct % selectedSum; // Calculate if there's any remainder
+
+        // Function to create lion groups with a max of 5 per line
+        const createLionGroups = (count, maxPerLine = 5) => {
+            let groups = "";
+            for (let i = 0; i < count; i += maxPerLine) {
+                groups += "<div>" + lionIcon.repeat(Math.min(maxPerLine, count - i)) + "</div>";
+            }
+            return groups;
+        };
+
+        // Display each group of lions for the multiplication factors
+        for (let i = 0; i < factor; i++) {
+            visualExplanation += "<div style='margin-bottom: 20px;'>";
+            visualExplanation += `<div style='font-size: 36px; margin-bottom: 5px;'>${selectedSum}</div>`; // Display the number above the lions
+            visualExplanation += createLionGroups(selectedSum);
+            visualExplanation += "</div>";
+        }
+
+        // Handle remainder if exists
+        if (remainder > 0) {
+            visualExplanation += "<div style='margin-bottom: 20px;'>";
+            visualExplanation += `<div style='font-size: 36px; margin-bottom: 5px;'>${remainder}</div>`; // Display the number above the lions
+            visualExplanation += createLionGroups(remainder);
+            visualExplanation += "</div>";
+        }
+
+        // Display the total count for the correct answer
+        visualExplanation += "<div style='margin-bottom: 20px;'>";
+        visualExplanation += `<div style='font-size: 48px; margin-bottom: 5px;'>Total: ${correctProduct}</div>`; // Emphasize the total product
+        visualExplanation += createLionGroups(correctProduct, 5); // Show all lions representing the total product, 5 per line
         visualExplanation += "</div>";
     }
 
     // Combine the message and the visual explanation
-    let modalContentHtml = `<h2 class="modal-message" style="font-size: 36px;">${message}</h2>`;
+    let modalContentHtml = `<h2 class="modal-message" style="font-size: 36px; margin-bottom: 20px;">${message}</h2>`;
+    modalContentHtml += visualExplanation;
+
+    // Update the modal content and display it
+    const modalContent = document.getElementById('levelCompleteModal').querySelector('.modal-content');
+    modalContent.innerHTML = modalContentHtml;
+    document.getElementById('levelCompleteModal').style.display = 'block';
+
+    // Add the jumping effect to the dinosaur
+    document.getElementById('dinosaur').classList.add('jumping');
+
+    // Reset the selected lions and the score
+    document.querySelectorAll('.lion').forEach(lion => lion.classList.remove('selected'));
+    document.getElementById('score').innerText = "Score: 0";
+    document.getElementById('selectedLionCount').innerText = "0";
+}
+
+export function resetLevelWithMessage(message) {
+    const gameType = document.querySelector('input[name="gameType"]:checked').value;
+    const selectedSum = calculateSelectedLionSum();
+    let visualExplanation = "";
+
+    // Define the lion icon and incorrect lion icon for excess
+    const lionIcon = "🦁";
+    const incorrectLionIcon = "🔴"; // Representing excess lions
+
+    // Function to create lion groups with a max of 5 per line
+    const createLionGroups = (count, icon = lionIcon, title = '') => {
+        let groups = `<div style='font-size: 36px; text-align: center;'>${title}</div>`;
+        for (let i = 0; i < count; i += 5) {
+            groups += "<div style='font-size: 48px;'>" + icon.repeat(Math.min(5, count - i)) + "</div>";
+        }
+        return groups;
+    };
+
+    // Addition logic remains the same
+    if (gameType === 'addition') {
+        const correctSum = window.quizAnswer;
+        const excessLions = Math.max(0, selectedSum - correctSum); // Only show excess if selectedSum is greater than correctSum
+
+        // Function to create lion groups with a max of 5 per line
+        const createLionGroups = (count) => {
+            let groups = "";
+            for (let i = 0; i < count; i += 5) {
+                groups += "<div>" + lionIcon.repeat(Math.min(5, count - i)) + "</div>";
+            }
+            return groups;
+        };
+
+        // Part 1: Selected Lions
+        visualExplanation += "<div style='margin-bottom: 20px;'>";
+        visualExplanation += `<div style='font-size: 36px; margin-bottom: 5px;'>${selectedSum}</div>`;
+        visualExplanation += createLionGroups(selectedSum);
+        visualExplanation += "</div>";
+
+        // Part 2: Excess Lions (if any)
+        if (excessLions > 0) {
+            visualExplanation += "<div style='font-size: 36px; margin-bottom: 5px; color: red;'>Too many!</div>";
+            visualExplanation += "<div style='margin-bottom: 20px;'>";
+            visualExplanation += `<div style='font-size: 36px; margin-bottom: 5px;'>${excessLions}</div>`;
+            visualExplanation += createLionGroups(excessLions);
+            visualExplanation += "</div>";
+        }
+
+        // Correct Answer
+        visualExplanation += "<div style='font-size: 36px; margin-bottom: 5px;'>Correct:</div>";
+        visualExplanation += "<div style='margin-bottom: 20px;'>";
+        visualExplanation += `<div style='font-size: 48px; margin-bottom: 5px;'>${correctSum}</div>`;
+        visualExplanation += createLionGroups(correctSum);
+        visualExplanation += "</div>";
+    }
+    // Enhanced multiplication logic
+    else if (gameType === 'multiplication') {
+        debugger;
+        // Ensure quizQuestion is defined and correctly formatted
+        if (window.quizQuestion && window.quizQuestion.includes('×')) {
+            const [factor1, factor2] = window.quizQuestion.split('×').map(Number);
+            const correctProduct = factor1 * factor2;
+            const excessLions = Math.max(0, selectedSum - correctProduct); // Calculate excess lions
+
+            // Display correct groups for multiplication
+            for (let i = 0; i < factor1; i++) {
+                visualExplanation += createLionGroups(factor2, lionIcon, `${factor2} Lions`);
+            }
+
+            // Highlight excess lions if the answer is too high
+            if (excessLions > 0) {
+                visualExplanation += "<div style='color: red; font-size: 36px; margin-top: 20px;'>Too many!</div>";
+                visualExplanation += createLionGroups(excessLions, incorrectLionIcon, `Extra Lions`);
+            }
+
+            // Display the total count for the correct answer
+            visualExplanation += "<div style='margin-top: 20px;'>";
+            visualExplanation += createLionGroups(correctProduct, lionIcon, `Total: ${correctProduct} Lions`);
+            visualExplanation += "</div>";
+        } else {
+            // Fallback message if quizQuestion is not defined or not in expected format
+            visualExplanation = "<div style='font-size: 36px; color: red; margin-top: 20px;'>Error: Question not defined or incorrect format.</div>";
+        }
+    }
+
+    // Combine the message and the visual explanation
+    let modalContentHtml = `<h2 class="modal-message" style="font-size: 36px; margin-bottom: 20px;">${message}</h2>`;
     modalContentHtml += visualExplanation;
 
     // Update the modal content and display it
