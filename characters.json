@@ -14,15 +14,15 @@
       "eatingSound": "sounds/unicorn.mp3"
     },
     "Ron": {
-      "image": "images/lollipop.png",
-      "backgroundImage": "images/candy2-background.jpg",
+      "image": "images/caramel.png",
+      "backgroundImage": "images/cat-background.jpeg",
       "lionImage": "images/cottonCandy.png",
       "movingSound": "sounds/unicorn.mp3",
       "eatingSound": "sounds/unicorn.mp3"
     },
     "Ellie": {
-      "image": "images/caramel.png",
-      "backgroundImage": "images/cat-background.jpeg",
+      "image": "images/lollipop.png",
+      "backgroundImage": "images/candy2-background.jpg",
       "lionImage": "images/cottonCandy.png",
       "movingSound": "sounds/unicorn.mp3",
       "eatingSound": "sounds/unicorn.mp3"

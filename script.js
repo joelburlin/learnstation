@@ -78,7 +78,7 @@ document.addEventListener('keydown', (e) => {
     }
  
     // Handle dinosaur movement
-    const speed = boostActive ? 400 : 100; // Adjust speed if boost is active
+    const speed = boostActive ? 300 : 80; // Adjust speed if boost is active
     if (boostActive) {
 
         console.log('boost active')
