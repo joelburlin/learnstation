@@ -15,8 +15,8 @@ body, html {
 
 #dinosaur {
     position: absolute;
-    width: 400px; /* Adjust size as needed */
-    height: 400px;
+    width: 8vw; /* Adjust size as needed */
+    height: 8vw;
     background: url('images/dinosaur.png') no-repeat center center;
     background-size: contain;
 }

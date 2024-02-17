@@ -15,7 +15,10 @@ function startNewGame() {
     document.querySelectorAll('.lion').forEach(lion => lion.classList.remove('selected'));
     document.getElementById('score').innerText = "Score: 0";
     document.getElementById('selectedLionCount').innerText = "0";
-    // Reset any other game state as needed
+    document.getElementById('currentLevel').innerText = "1";
+
+    
+    // Reset any other game state as neededcurrentLevel
 }
  
 
